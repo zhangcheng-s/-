@@ -118,15 +118,15 @@
         <div class="progress-container">
           <div class="progress-item" v-if="hasValue(detailData.relativeAbundance)">
             <div class="progress-label">相对丰度</div>
-            <el-progress :percentage="Math.min(100, parseFloat(detailData.relativeAbundance))" :color="'#67C23A'"></el-progress>
+            <el-progress :percentage="safePercentage(detailData.relativeAbundance)" :color="'#67C23A'"></el-progress>
           </div>
           <div class="progress-item" v-if="hasValue(detailData.relativeDominance)">
             <div class="progress-label">相对优势度</div>
-            <el-progress :percentage="Math.min(100, parseFloat(detailData.relativeDominance))" :color="'#409EFF'"></el-progress>
+            <el-progress :percentage="safePercentage(detailData.relativeDominance)" :color="'#409EFF'"></el-progress>
           </div>
           <div class="progress-item" v-if="hasValue(detailData.taxonDensity)">
             <div class="progress-label">分类群密度</div>
-            <el-progress :percentage="Math.min(100, parseFloat(detailData.taxonDensity))" :color="'#E6A23C'"></el-progress>
+            <el-progress :percentage="safePercentage(detailData.taxonDensity)" :color="'#E6A23C'"></el-progress>
           </div>
         </div>
       </el-card>
@@ -374,7 +374,7 @@
             <div class="info-value">{{ detailData.notesOnDnaOrMorphologicalIdentification }}</div>
           </div>
         </div>
-        <div class="dna-taxonomist" v-if="hasValue(detailData.dnaTaxonomist)">
+        <div class="dna-taxonomist" v-if="hasValue(detailData.dnaTaxonomist) || hasValue(detailData.dnaTaxonomistEmail) || hasValue(detailData.dnaTaxonomistInstitution)">
           <h4>DNA分类学家</h4>
           <div class="info-grid">
             <div class="info-item" v-if="hasValue(detailData.dnaTaxonomist)">
@@ -737,6 +737,14 @@ export default {
         return true; // boolean values are always considered valid
       }
       return true;
+    },
+    // Safely parse percentage value and cap at 100
+    safePercentage(value) {
+      const parsed = parseFloat(value);
+      if (isNaN(parsed)) {
+        return 0;
+      }
+      return Math.min(100, Math.max(0, parsed));
     },
     // Method to load data from API
     loadDetailData(id) {
