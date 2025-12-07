@@ -118,11 +118,11 @@
         <div class="progress-container">
           <div class="progress-item" v-if="hasValue(detailData.relativeAbundance)">
             <div class="progress-label">相对丰度</div>
-            <el-progress :percentage="parseFloat(detailData.relativeAbundance)" :color="'#67C23A'"></el-progress>
+            <el-progress :percentage="Math.min(100, parseFloat(detailData.relativeAbundance))" :color="'#67C23A'"></el-progress>
           </div>
           <div class="progress-item" v-if="hasValue(detailData.relativeDominance)">
             <div class="progress-label">相对优势度</div>
-            <el-progress :percentage="parseFloat(detailData.relativeDominance)" :color="'#409EFF'"></el-progress>
+            <el-progress :percentage="Math.min(100, parseFloat(detailData.relativeDominance))" :color="'#409EFF'"></el-progress>
           </div>
           <div class="progress-item" v-if="hasValue(detailData.taxonDensity)">
             <div class="progress-label">分类群密度</div>
@@ -728,6 +728,8 @@ export default {
       if (typeof value === 'string' && value.trim() === '') {
         return false;
       }
+      // Note: Numeric 0 is treated as "no value" for this use case
+      // If 0 is a valid value for certain fields, consider field-specific validation
       if (typeof value === 'number' && value === 0) {
         return false;
       }
